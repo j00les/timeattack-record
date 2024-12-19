@@ -1,7 +1,7 @@
 const lapForm = document.getElementById('lapForm');
 const table = document.querySelector('.table');
 
-const colors = ['red', 'blue', 'green', 'orange', 'yellow'];
+const colors = ['red', 'blue', 'green', 'orange', 'yellow', 'violet'];
 
 const records = {};
 const socket = new WebSocket('ws://localhost:3000');
@@ -88,6 +88,10 @@ function timeToMilliseconds(formattedTime) {
   );
 }
 
+function isEven(number) {
+  return number % 2 === 0;
+}
+
 function updateLeaderboard() {
   // Save to IndexedDB
   saveToIndexedDB(records);
@@ -103,15 +107,11 @@ function updateLeaderboard() {
   sortedRecords.forEach((record, index) => {
     const newRow = document.createElement('tr');
 
-    if (index < 3) {
-      newRow.style.color = '#fe691e';
-      newRow.style.fontWeight = 'bold';
+    if (isEven(index)) {
+      newRow.style.backgroundColor = '#F0F0F0'
     }
 
-    if (index >= 2 && index <= 9) {
-      newRow.style.color = '#1939d2';
-      newRow.style.fontWeight = 'bold';
-    }
+
 
     newRow.innerHTML = `
       <td class="position">

@@ -37,8 +37,12 @@ body {
 }
 
 .table-header {
-  color: red;
+  color: #e62129;
   text-align: center;
+  font-size: 5rem;
+  font-family:Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  margin: 0px;
 }
 
 .header img {
@@ -52,6 +56,12 @@ body {
   font-size: 18px;
   margin: 0;
 }
+
+
+p {
+  margin:5px;
+}
+
 
 .table {
   width: 100%;
@@ -101,7 +111,7 @@ table .car-header {
 }
 
 .table .name {
-  width: 100px;
+  width: 200px;
   text-align: left;
 }
 
@@ -134,7 +144,7 @@ table .car-header {
   width: 4px;
   border: solid 1px red;
   max-width: 1200px;
-  padding: 1px;
+  padding: 3px;
 }
 
 .blue {
@@ -142,7 +152,7 @@ table .car-header {
   height: 1.5rem;
   width: 4px;
   border: solid 1px blue;
-  padding: 1px;
+  padding: 3px;
 }
 
 .green {
@@ -150,7 +160,7 @@ table .car-header {
   height: 1.5rem;
   width: 4px;
   border: solid 1px green;
-  padding: 1px;
+  padding: 3px;
 }
 
 .yellow {
@@ -158,7 +168,7 @@ table .car-header {
   height: 1.5rem;
   width: 4px;
   border: solid 1px yellow;
-  padding: 1px;
+  padding: 3px;
 }
 
 .orange {
@@ -166,11 +176,20 @@ table .car-header {
   height: 1.5rem;
   width: 4px;
   border: solid 1px orange;
-  padding: 1px;
+  padding: 3px;
+}
+
+
+.violet {
+  background-color: #8A2BE2;
+  height: 1.5rem;
+  width: 4px;
+  border: solid 1px #8A2BE2;
+  padding: 3px;
 }
 
 .player-name {
-  width: 10rem;
+  width: 20rem;
   display: flex;
   gap: 0.4rem;
 }
@@ -206,5 +225,11 @@ input[type='submit'] {
 }
 
 #logo-container {
+  width: 100%;
+  margin-top: 3rem;
+  
+}
+
+#vector-container {
   width: 100%;
 }

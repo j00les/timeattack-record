@@ -1,7 +1,7 @@
 const lapForm = document.getElementById('lapForm');
 const table = document.querySelector('.table');
 
-const colors = ['red', 'blue', 'green', 'orange', '#00FFFF'];
+const colors = ['red', 'blue', 'green', 'orange', 'yellow'];
 
 const records = {};
 const socket = new WebSocket('ws://localhost:3000');
@@ -105,6 +105,11 @@ function updateLeaderboard() {
 
     if (index < 3) {
       newRow.style.color = '#fe691e';
+      newRow.style.fontWeight = 'bold';
+    }
+
+    if (index >= 2 && index <= 9) {
+      newRow.style.color = '#1939d2';
       newRow.style.fontWeight = 'bold';
     }
 

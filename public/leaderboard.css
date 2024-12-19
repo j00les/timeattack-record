@@ -199,3 +199,12 @@ input[type='submit'] {
   border-radius: 4px;
   cursor: pointer;
 }
+
+#sa-logo {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+#logo-container {
+  width: 100%;
+}

@@ -6,6 +6,8 @@ const app = express();
 const PORT = 3000;
 
 // Serve static files
+
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes

@@ -1,8 +1,8 @@
 const lapForm = document.getElementById('lapForm');
 const table = document.querySelector('.table');
+const deleteButton = document.getElementById('deleteData');
 
 const colors = ['red', 'blue', 'green', 'orange', 'yellow', 'violet'];
-
 const records = {};
 const socket = new WebSocket('ws://localhost:3000');
 
@@ -106,12 +106,11 @@ function updateLeaderboard() {
 
   sortedRecords.forEach((record, index) => {
     const newRow = document.createElement('tr');
+    newRow.id = 'raceDataRow';
 
     if (isEven(index)) {
-      newRow.style.backgroundColor = '#F0F0F0'
+      newRow.style.backgroundColor = '#F0F0F0';
     }
-
-
 
     newRow.innerHTML = `
       <td class="position">
@@ -160,7 +159,7 @@ function initIndexedDB() {
       const db = event.target.result;
 
       // Create an object store for records if it doesn't exist
-      if (!db.objectStoreNames.contains('records')) {
+      if (!db.stores.contains('records')) {
         db.createObjectStore('records', { keyPath: 'id', autoIncrement: true });
       }
     };
@@ -226,3 +225,90 @@ window.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+document.getElementById('deleteData').addEventListener('click', function () {
+  // Ask for confirmation before deleting
+  const isConfirmed = confirm('Are you sure you want to clear all data?');
+  if (!isConfirmed) {
+    return; // Do nothing if the user cancels
+  }
+
+  const databaseName = 'RaceLeaderboard';
+  const objectStoreName = 'records';
+
+  const openRequest = indexedDB.open(databaseName);
+
+  openRequest.onsuccess = function (event) {
+    const db = event.target.result;
+
+    const transaction = db.transaction(objectStoreName, 'readwrite');
+    const objectStore = transaction.objectStore(objectStoreName);
+
+    const clearRequest = objectStore.clear();
+
+    clearRequest.onsuccess = function () {
+      console.log(`All data in the object store '${objectStoreName}' has been cleared.`);
+      alert(`All data in the object store '${objectStoreName}' has been cleared.`);
+
+      // After clearing, re-fetch data or refresh the UI
+      refreshData();
+    };
+
+    clearRequest.onerror = function (errorEvent) {
+      console.error('Failed to clear the object store:', errorEvent.target.error);
+      alert('Failed to clear the object store.');
+    };
+  };
+
+  openRequest.onerror = function (errorEvent) {
+    console.error('Failed to open the database:', errorEvent.target.error);
+    alert('Failed to open the database.');
+  };
+});
+
+// Function to re-fetch and refresh the data after clearing
+function refreshData() {
+  const databaseName = 'RaceLeaderboard';
+  const objectStoreName = 'records';
+
+  const openRequest = indexedDB.open(databaseName);
+
+  openRequest.onsuccess = function (event) {
+    const db = event.target.result;
+
+    const transaction = db.transaction(objectStoreName, 'readonly');
+    const objectStore = transaction.objectStore(objectStoreName);
+
+    // Get all the records to refresh the UI
+    const getAllRequest = objectStore.getAll();
+
+    getAllRequest.onsuccess = function () {
+      const records = getAllRequest.result;
+
+      console.log('Data after clearing:', records);
+      // You can use this `records` array to refresh the UI
+      updateUI(records);
+    };
+
+    getAllRequest.onerror = function (errorEvent) {
+      console.error('Failed to fetch data:', errorEvent.target.error);
+      alert('Failed to fetch data.');
+    };
+  };
+
+  openRequest.onerror = function (errorEvent) {
+    console.error('Failed to open the database:', errorEvent.target.error);
+    alert('Failed to open the database.');
+  };
+}
+
+// Example function to update the UI with the current records
+function updateUI(records) {
+  // Assuming you have an element to display the data
+  const dataContainer = document.getElementById('raceDataRow');
+  dataContainer.innerHTML = ''; // Clear existing content
+
+  if (records.length === 0) {
+    dataContainer.innerHTML = '';
+  }
+}

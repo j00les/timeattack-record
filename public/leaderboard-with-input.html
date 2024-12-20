@@ -19,16 +19,19 @@
           <input type="text" id="name" placeholder="NAMA" required />
           <input type="text" id="car" placeholder="MOBIL" required />
           <input type="text" id="lapTime" placeholder="WAKTU (MMDDddd)" required />
-          <input type="submit" value="SUBMIT" style="font-size: medium; font-family: 'Titillium Web', sans-serif" />
+          <input type="submit" value="SUBMIT" />
 
-          <button id="exportData">Export to Spreadsheet</button>
+          <div class="export-and-delete-button">
+            <button type="button" id="deleteData">DELETE</button>
+            <button type="button" id="exportData">EXPORT</button>
+          </div>
         </form>
       </div>
 
       <div class="table-container">
         <h2 class="table-header">BEST TIME</h2>
         <table class="table">
-          <tbody>
+          <tbody id="tableBody">
             <tr>
               <th class="position-header">POSISI</th>
               <th class="time-header">WAKTU</th>

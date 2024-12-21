@@ -1,5 +1,5 @@
 @echo off
-cd /d D:\Repos\timeattack-record
+cd /d C:\Users\nabie\Repos\timeattack-record
 
 :: Start the Node.js service
 start node server.js
@@ -11,5 +11,5 @@ timeout /t 5 /nobreak >nul
 set "chromePath=C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 :: Open the HTML files in Chrome
-start "" "%chromePath%" "D:\Repos\timeattack-record\open-input.html"
-start "" "%chromePath%" "D:\Repos\timeattack-record\open-leaderboard.html"
+start "" "%chromePath%" "C:\Users\nabie\Repos\timeattack-record\open-input.html"
+start "" "%chromePath%" "C:\Users\nabie\Repos\timeattack-record\open-leaderboard.html"

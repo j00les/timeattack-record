@@ -239,7 +239,10 @@ input[type='submit'] {
 
 }
 
-
 p {
   margin: 5px;
+}
+
+.single-digit {
+  margin-left: .7rem;
 }

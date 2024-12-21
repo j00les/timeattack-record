@@ -1,6 +1,4 @@
-todo:
-1. integrate express
-2. persistent data
+
 
 1. SA M3T 0046525
 2. Pak WieWie MiniGP 0046611
@@ -15,4 +13,8 @@ todo:
 11.SENNA MCLAREN 0050224
 12.AYRTON LOTUS 0050225
 
-	
+
+todo: 
+1. direfresh ilang [check]
+2. numbre [check]
+3. darker grey

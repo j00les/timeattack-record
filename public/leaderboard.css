@@ -12,10 +12,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5rem;
   gap: 30px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.single-digit {
+  margin-left: 1rem;
 }
 
 .form-container {
@@ -86,7 +89,7 @@ table .position {
   display: flex;
   gap: 10px;
   align-items: center;
-  /* justify-content: space-evenly; */
+  justify-content: space-evenly;
 }
 
 table .position-header {

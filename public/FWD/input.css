@@ -97,6 +97,11 @@ table .time-header {
 table .car-header {
   width: 1rem;
   text-align: center;
+}
+
+table .button-header {
+  width: 1rem;
+  text-align: center;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }

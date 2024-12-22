@@ -6,25 +6,24 @@ const app = express();
 const PORT = 3000;
 
 // Serve static files
-
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/leaderboard-with-input.html'));
+//FWD
+app.get('/fwd-input', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/FWD/input.html'));
 });
 
-app.get('/leaderboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/leaderboard.html'));
+app.get('/fwd-leaderboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/FWD/leaderboard.html'));
 });
+// -----
 
-// Start the HTTP server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-// WebSocket server
 const wss = new WebSocket.Server({ server });
 
 let clients = [];

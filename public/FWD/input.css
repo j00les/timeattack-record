@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'Sugo-Pro'; 
+    src: url('assets/fonts/sugo_pro_classic/Sugo-Pro-Classic-Bold-trial.ttf') format('truetype'); 
+}
+
+/* @font-face {
+    font-family: 'Sugo-Pro'; 
+    src: url('fonts/custom-font.ttf') format('truetype'); 
+} */
+
 body {
   color: black;
   margin: 0;
@@ -58,6 +68,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  table-layout: fixed;
 }
 
 .table th,
@@ -79,7 +90,6 @@ table .position {
   display: flex;
   gap: 10px;
   align-items: center;
-  /* justify-content: space-evenly; */
 }
 
 table .position-header {
@@ -109,6 +119,7 @@ table .button-header {
 .table .name {
   width: 100px;
   text-align: left;
+  white-space: nowrap;
 }
 
 .table .time {
@@ -195,7 +206,8 @@ form {
 }
 
 input[type='text'],
-input[type='time'] {
+input[type='number']
+{
   padding: 10px;
   font-size: 16px;
   /* background-color: #333; */

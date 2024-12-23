@@ -17,4 +17,8 @@
 todo: 
 1. direfresh ilang [check]
 2. numbre [check]
-3. darker grey
+3. darker grey [check]
+6. limit name to 11 characters [check]
+7. constraint input waktu angka aja gaboleh huruf [check]
+4. limit 10 di leaderboard
+5. delete button

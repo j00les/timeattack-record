@@ -1,3 +1,5 @@
+const input = document.getElementById('input');
+const leaderboard = document.getElementById('leaderboard');
 const lapForm = document.getElementById('lapForm');
 const table = document.querySelector('.table');
 const deleteButton = document.getElementById('deleteData');
@@ -23,11 +25,15 @@ if (lapForm) {
   lapForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const name = document.getElementById('name').value.trim().toUpperCase();
+    let name = document.getElementById('name').value.trim().toUpperCase();
     const lapTimeString = document.getElementById('lapTime').value.trim().toUpperCase();
     const carName = document.getElementById('car').value.trim().toUpperCase();
 
-    // Parse the lap time input (e.g., "0050000" to "00:50:000")
+    if (name.length > 18) {
+      name = name.slice(0, 11);
+    }
+
+    //  Parse the lap time input (e.g., "0050000" to "00:50:000")
     const formattedTime = formatLapTime(lapTimeString);
 
     // Convert lap time to milliseconds for comparison
@@ -47,7 +53,8 @@ if (lapForm) {
       }
     } else {
       // Assign a random color from the colors array
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      const indexNumber = Math.floor(Math.random() * colors.length);
+      const randomColor = colors[indexNumber];
 
       // Create a new record
       const newRecord = {
@@ -93,29 +100,26 @@ function isEven(number) {
 }
 
 function updateLeaderboard() {
-  // Save to IndexedDB
+  const sortedRecords = Object.values(records).sort((a, b) => a.lapTime - b.lapTime);
+
   saveToIndexedDB(records);
 
-  // Clear and rebuild the leaderboard as before
   const rows = document.querySelectorAll('.table tr');
   rows.forEach((row, index) => {
     if (index !== 0) row.remove();
   });
 
-  const sortedRecords = Object.values(records).sort((a, b) => a.lapTime - b.lapTime);
-
   sortedRecords.forEach((record, index) => {
     const newRow = document.createElement('tr');
+    const position = index + 1;
+    const isSingleDigit = position < 10;
+    const isMoreThanTen = position > 10;
+    const positionClass = isSingleDigit ? 'single-digit' : '';
     newRow.id = 'raceDataRow';
 
     if (isEven(index)) {
       newRow.style.backgroundColor = '#D0D0D0';
     }
-
-    // Check if the position number is two digits
-    const position = index + 1;
-    const isSingleDigit = position < 10;
-    const positionClass = isSingleDigit ? 'single-digit' : '';
 
     newRow.innerHTML = `
       <td class="position">
@@ -125,9 +129,28 @@ function updateLeaderboard() {
           <p class="name">${record.name}</p>
         </div>
       </td>
-      <td class="time">${record.lapTimeString}</td>
+      <td class="time">
+        <div class="player-time">
+           <p class="time-text">${record.lapTimeString}</p>
+        </div>
+      </td>
       <td class="car">${record.carName}</td>
     `;
+
+    if (isMoreThanTen) {
+      newRow.style.backgroundColor = '#FFFFFF';
+
+      // Now query and style the '.name' elements
+      const nameElements = newRow.querySelectorAll('.name');
+      nameElements.forEach((element) => {
+        element.style.fontFamily = 'Titillium Web, sans-serif';
+        element.style.fontWeight = 600;
+        element.style.fontSize = 'x-large';
+      });
+
+      record.colorClass = 'black';
+    }
+
     table.appendChild(newRow);
   });
 }
@@ -179,6 +202,7 @@ function initIndexedDB() {
     };
   });
 }
+
 function saveToIndexedDB(data) {
   initIndexedDB().then((db) => {
     const transaction = db.transaction(['records'], 'readwrite');

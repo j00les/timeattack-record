@@ -95,8 +95,8 @@ function timeToMilliseconds(formattedTime) {
   );
 }
 
-function isEven(number) {
-  return number % 2 === 0;
+function isOdd(number) {
+  return number % 2 !== 0;
 }
 
 function updateLeaderboard() {
@@ -117,14 +117,16 @@ function updateLeaderboard() {
     const positionClass = isSingleDigit ? 'single-digit' : '';
     newRow.id = 'raceDataRow';
 
-    if (isEven(index)) {
+    if (isOdd(index)) {
       newRow.style.backgroundColor = '#D0D0D0';
     }
+
+    const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
 
     newRow.innerHTML = `
       <td class="position">
         <div class="player-position ${positionClass}" style="color: black;" >${position}</div>
-        <div class="color-box ${record.colorClass}"></div>
+        <div class="color-box ${rowColorClass}"></div>
         <div class="player-name">
           <p class="name">${record.name}</p>
         </div>
@@ -145,7 +147,7 @@ function updateLeaderboard() {
       nameElements.forEach((element) => {
         element.style.fontFamily = 'Titillium Web, sans-serif';
         element.style.fontWeight = 600;
-        element.style.fontSize = 'x-large';
+        element.style.fontSize = '20.5px';
       });
 
       record.colorClass = 'black';

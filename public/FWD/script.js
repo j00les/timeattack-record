@@ -138,9 +138,9 @@ function updateLeaderboard() {
     `;
 
     if (isMoreThanTen) {
-      newRow.style.backgroundColor = '#FFFFFF';
+      // newRow.style.backgroundColor = '#FFFFFF';
 
-      // Now query and style the '.name' elements
+      // change font style for > 10
       const nameElements = newRow.querySelectorAll('.name');
       nameElements.forEach((element) => {
         element.style.fontFamily = 'Titillium Web, sans-serif';

@@ -5,6 +5,7 @@ const table = document.querySelector('.table');
 const deleteButton = document.getElementById('deleteData');
 
 const colors = ['red', 'blue', 'green', 'orange', 'yellow', 'violet'];
+
 const records = {};
 const socket = new WebSocket('ws://localhost:3000');
 

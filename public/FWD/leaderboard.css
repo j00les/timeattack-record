@@ -16,7 +16,7 @@ body {
 }
 
 .single-digit {
-  margin-left: 1rem;
+  margin-left: 0.9rem;
 }
 
 .form-container {
@@ -146,51 +146,50 @@ table .car-header {
 }
 
 .red {
-  background-color: #ff0000;
+  background-color: hsl(0, 100%, 50%); /* Bright red */
   height: 1.5rem;
   width: 4px;
-  border: solid 1px red;
-  max-width: 1200px;
+  border: solid 1px hsl(0, 100%, 50%);
   padding: 3px;
 }
 
 .blue {
-  background-color: #0000ff;
+  background-color: hsl(240, 100%, 50%); /* Bright blue */
   height: 1.5rem;
   width: 4px;
-  border: solid 1px blue;
+  border: solid 1px hsl(240, 100%, 50%);
   padding: 3px;
 }
 
 .green {
-  background-color: #008000;
+  background-color: hsl(120, 100%, 50%); /* Bright green */
   height: 1.5rem;
   width: 4px;
-  border: solid 1px green;
+  border: solid 1px hsl(120, 100%, 50%);
   padding: 3px;
 }
 
 .yellow {
-  background-color: #ffff00;
+  background-color: hsl(60, 100%, 50%); /* Bright yellow */
   height: 1.5rem;
   width: 4px;
-  border: solid 1px yellow;
+  border: solid 1px hsl(60, 100%, 50%);
   padding: 3px;
 }
 
 .orange {
-  background-color: #ff8c00;
+  background-color: hsl(30, 100%, 50%); /* Bright orange */
   height: 1.5rem;
   width: 4px;
-  border: solid 1px orange;
+  border: solid 1px hsl(30, 100%, 50%);
   padding: 3px;
 }
 
 .violet {
-  background-color: #8a2be2;
+  background-color: hsl(270, 100%, 50%); /* Bright violet */
   height: 1.5rem;
   width: 4px;
-  border: solid 1px #8a2be2;
+  border: solid 1px hsl(270, 100%, 50%);
   padding: 3px;
 }
 

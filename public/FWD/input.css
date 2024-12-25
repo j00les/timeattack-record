@@ -3,11 +3,6 @@
     src: url('assets/fonts/sugo_pro_classic/Sugo-Pro-Classic-Bold-trial.ttf') format('truetype'); 
 }
 
-/* @font-face {
-    font-family: 'Sugo-Pro'; 
-    src: url('fonts/custom-font.ttf') format('truetype'); 
-} */
-
 body {
   color: black;
   margin: 0;
@@ -20,8 +15,8 @@ body {
 
 .container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-evenly;
+  align-items: flex-start; /* Align children to the top */
   gap: 30px;
   max-width: 1200px;
   padding-top: 6rem;
@@ -29,14 +24,13 @@ body {
 }
 
 .form-container {
-  flex: 1;
-  max-width: 400px;
-  height: fit-content;
-  padding-top: 3rem;
+  flex: 0 0 35%; /* Adjust width as needed */
 }
 
 .table-container {
-  flex: 2;
+  flex: 0 0 60%; /* Adjust width as needed */
+  height: 500px; /* Fixed height for the table section */
+  overflow-y: auto; 
 }
 
 .header {
@@ -110,6 +104,11 @@ table .car-header {
 }
 
 table .button-header {
+  width: .5rem;
+  text-align: center;
+}
+
+table .delete-header {
   width: 1rem;
   text-align: center;
   border-top-right-radius: 5px;

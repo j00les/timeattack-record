@@ -103,10 +103,10 @@ function isOdd(number) {
 function updateLeaderboard() {
   const sortedRecords = Object.values(records).sort((a, b) => a.lapTime - b.lapTime);
   const top20Records = sortedRecords.slice(0, 20);
+  const rows = document.querySelectorAll('.table tr');
 
   saveToIndexedDB(records);
 
-  const rows = document.querySelectorAll('.table tr');
   rows.forEach((row, index) => {
     if (index !== 0) row.remove();
   });
@@ -168,18 +168,18 @@ function updateLeaderboard() {
       const isSingleDigit = position < 10;
       const isMoreThanTen = position > 10;
       const positionClass = isSingleDigit ? 'single-digit' : '';
-      newRow.id = 'raceDataRow';
+      newRow.id = `raceDataRow-${index}`; // Unique ID for each row
 
+      // Apply alternating row colors
       if (isOdd(index)) {
         newRow.style.backgroundColor = '#D0D0D0';
       }
 
       const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
 
-
       newRow.innerHTML = `
         <td class="position">
-          <div class="player-position ${positionClass}" style="color: black;" >${position}</div>
+          <div class="player-position ${positionClass}" style="color: black;">${position}</div>
           <div class="color-box ${rowColorClass}"></div>
           <div class="player-name">
             <p class="name">${record.name}</p>
@@ -191,12 +191,13 @@ function updateLeaderboard() {
           </div>
         </td>
         <td class="car">${record.carName}</td>
+        <td class="delete">
+          <button class="delete-button" data-key="${record.name}-${record.carName}">Delete</button>
+        </td>
       `;
 
+      // Apply additional styling for rows with position > 10
       if (isMoreThanTen) {
-        // newRow.style.backgroundColor = '#FFFFFF';
-
-        // change font style for > 10
         const nameElements = newRow.querySelectorAll('.name');
         nameElements.forEach((element) => {
           element.style.fontFamily = 'Titillium Web, sans-serif';
@@ -207,10 +208,24 @@ function updateLeaderboard() {
         record.colorClass = 'black';
       }
 
+      // Append the new row to the table
       table.appendChild(newRow);
     });
 
+    // Add event listener for delete buttons
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+         const recordKey = button.getAttribute('data-key');
+         if (records[recordKey]) {
+           delete records[recordKey]; // Remove the record from memory
+           saveToIndexedDB(Object.values(records)); // Update IndexedDB
+           updateLeaderboard(); // Refresh the table
+         }
+       });
+    });
   }
+
 
 }
 
@@ -339,9 +354,6 @@ if (deleteButton) {
       clearRequest.onsuccess = function () {
         console.log(`All data in the object store '${objectStoreName}' has been cleared.`);
         alert(`All data in the object store '${objectStoreName}' has been cleared.`);
-
-        // After clearing, re-fetch data or refresh the UI
-        refreshData();
       };
 
       clearRequest.onerror = function (errorEvent) {
@@ -357,41 +369,6 @@ if (deleteButton) {
   });
 }
 
-// Function to re-fetch and refresh the data after clearing
-function refreshData() {
-  const databaseName = 'RaceLeaderboard';
-  const objectStoreName = 'records';
-
-  const openRequest = indexedDB.open(databaseName);
-
-  openRequest.onsuccess = function (event) {
-    const db = event.target.result;
-
-    const transaction = db.transaction(objectStoreName, 'readonly');
-    const objectStore = transaction.objectStore(objectStoreName);
-
-    // Get all the records to refresh the UI
-    const getAllRequest = objectStore.getAll();
-
-    getAllRequest.onsuccess = function () {
-      const records = getAllRequest.result;
-
-      console.log('Data after clearing:', records);
-      // You can use this `records` array to refresh the UI
-      updateUI(records);
-    };
-
-    getAllRequest.onerror = function (errorEvent) {
-      console.error('Failed to fetch data:', errorEvent.target.error);
-      alert('Failed to fetch data.');
-    };
-  };
-
-  openRequest.onerror = function (errorEvent) {
-    console.error('Failed to open the database:', errorEvent.target.error);
-    alert('Failed to open the database.');
-  };
-}
 
 // Example function to update the UI with the current records
 function updateUI(records) {

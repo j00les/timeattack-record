@@ -1,5 +1,5 @@
-const input = document.getElementById('input');
-const leaderboard = document.getElementById('leaderboard');
+const inputPage = document.getElementById('input');
+const leaderboardPage = document.getElementById('leaderboard');
 const lapForm = document.getElementById('lapForm');
 const table = document.querySelector('.table');
 const deleteButton = document.getElementById('deleteData');
@@ -102,6 +102,7 @@ function isOdd(number) {
 
 function updateLeaderboard() {
   const sortedRecords = Object.values(records).sort((a, b) => a.lapTime - b.lapTime);
+  const top20Records = sortedRecords.slice(0, 20);
 
   saveToIndexedDB(records);
 
@@ -110,52 +111,107 @@ function updateLeaderboard() {
     if (index !== 0) row.remove();
   });
 
-  sortedRecords.forEach((record, index) => {
-    const newRow = document.createElement('tr');
-    const position = index + 1;
-    const isSingleDigit = position < 10;
-    const isMoreThanTen = position > 10;
-    const positionClass = isSingleDigit ? 'single-digit' : '';
-    newRow.id = 'raceDataRow';
+  if(leaderboardPage) {
+    top20Records.forEach((record, index) => {
+      const newRow = document.createElement('tr');
+      const position = index + 1;
+      const isSingleDigit = position < 10;
+      const isMoreThanTen = position > 10;
+      const positionClass = isSingleDigit ? 'single-digit' : '';
+      newRow.id = 'raceDataRow';
 
-    if (isOdd(index)) {
-      newRow.style.backgroundColor = '#D0D0D0';
-    }
+      if (isOdd(index)) {
+        newRow.style.backgroundColor = '#D0D0D0';
+      }
 
-    const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
+      const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
 
-    newRow.innerHTML = `
-      <td class="position">
-        <div class="player-position ${positionClass}" style="color: black;" >${position}</div>
-        <div class="color-box ${rowColorClass}"></div>
-        <div class="player-name">
-          <p class="name">${record.name}</p>
-        </div>
-      </td>
-      <td class="time">
-        <div class="player-time">
-           <p class="time-text">${record.lapTimeString}</p>
-        </div>
-      </td>
-      <td class="car">${record.carName}</td>
-    `;
 
-    if (isMoreThanTen) {
-      // newRow.style.backgroundColor = '#FFFFFF';
+      newRow.innerHTML = `
+        <td class="position">
+          <div class="player-position ${positionClass}" style="color: black;" >${position}</div>
+          <div class="color-box ${rowColorClass}"></div>
+          <div class="player-name">
+            <p class="name">${record.name}</p>
+          </div>
+        </td>
+        <td class="time">
+          <div class="player-time">
+             <p class="time-text">${record.lapTimeString}</p>
+          </div>
+        </td>
+        <td class="car">${record.carName}</td>
+      `;
 
-      // change font style for > 10
-      const nameElements = newRow.querySelectorAll('.name');
-      nameElements.forEach((element) => {
-        element.style.fontFamily = 'Titillium Web, sans-serif';
-        element.style.fontWeight = 600;
-        element.style.fontSize = '20.5px';
-      });
+      if (isMoreThanTen) {
+        // newRow.style.backgroundColor = '#FFFFFF';
 
-      record.colorClass = 'black';
-    }
+        // change font style for > 10
+        const nameElements = newRow.querySelectorAll('.name');
+        nameElements.forEach((element) => {
+          element.style.fontFamily = 'Titillium Web, sans-serif';
+          element.style.fontWeight = 600;
+          element.style.fontSize = '20.5px';
+        });
 
-    table.appendChild(newRow);
-  });
+        record.colorClass = 'black';
+      }
+
+      table.appendChild(newRow);
+    });
+  }
+
+  if (inputPage) {
+    sortedRecords.forEach((record, index) => {
+      const newRow = document.createElement('tr');
+      const position = index + 1;
+      const isSingleDigit = position < 10;
+      const isMoreThanTen = position > 10;
+      const positionClass = isSingleDigit ? 'single-digit' : '';
+      newRow.id = 'raceDataRow';
+
+      if (isOdd(index)) {
+        newRow.style.backgroundColor = '#D0D0D0';
+      }
+
+      const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
+
+
+      newRow.innerHTML = `
+        <td class="position">
+          <div class="player-position ${positionClass}" style="color: black;" >${position}</div>
+          <div class="color-box ${rowColorClass}"></div>
+          <div class="player-name">
+            <p class="name">${record.name}</p>
+          </div>
+        </td>
+        <td class="time">
+          <div class="player-time">
+             <p class="time-text">${record.lapTimeString}</p>
+          </div>
+        </td>
+        <td class="car">${record.carName}</td>
+      `;
+
+      if (isMoreThanTen) {
+        // newRow.style.backgroundColor = '#FFFFFF';
+
+        // change font style for > 10
+        const nameElements = newRow.querySelectorAll('.name');
+        nameElements.forEach((element) => {
+          element.style.fontFamily = 'Titillium Web, sans-serif';
+          element.style.fontWeight = 600;
+          element.style.fontSize = 'large';
+        });
+
+        record.colorClass = 'black';
+      }
+
+      table.appendChild(newRow);
+    });
+
+  }
+
 }
 
 // export result to csv

@@ -3,11 +3,6 @@
     src: url('assets/fonts/sugo_pro_classic/Sugo-Pro-Classic-Bold-trial.ttf') format('truetype'); 
 }
 
-/* @font-face {
-    font-family: 'Sugo-Pro'; 
-    src: url('fonts/custom-font.ttf') format('truetype'); 
-} */
-
 body {
   color: black;
   margin: 0;

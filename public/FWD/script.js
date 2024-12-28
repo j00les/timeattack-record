@@ -10,7 +10,7 @@ const records = {};
 const socket = new WebSocket('ws://localhost:3000');
 
 // Listen for real-time updates from the server
-socket.onmessage = function (event) {
+socket.onmessage = (event) => {
   const updatedRecord = JSON.parse(event.data);
 
   console.log(updatedRecord, '--debug cobain aja');
@@ -23,7 +23,7 @@ socket.onmessage = function (event) {
 
 // check if lapform exist first
 if (lapForm) {
-  lapForm.addEventListener('submit', function (event) {
+  lapForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
     let name = document.getElementById('name').value.trim().toUpperCase();
@@ -78,29 +78,29 @@ if (lapForm) {
 }
 
 // Format input time (e.g., 0050000 to 00:50:000)
-function formatLapTime(timeString) {
+const formatLapTime = (timeString) => {
   const paddedTime = timeString.padStart(7, '0');
   const minutes = paddedTime.substring(0, 2);
   const seconds = paddedTime.substring(2, 4);
   const milliseconds = paddedTime.substring(4);
   return `${minutes}:${seconds}:${milliseconds}`;
-}
+};
 
 // Convert formatted time to milliseconds
-function timeToMilliseconds(formattedTime) {
+const timeToMilliseconds = (formattedTime) => {
   const [minutes, seconds, milliseconds] = formattedTime.split(':');
   return (
     parseInt(minutes) * 60000 + // Minutes to milliseconds
     parseInt(seconds) * 1000 + // Seconds to milliseconds
     parseInt(milliseconds) // Milliseconds
   );
-}
+};
 
-function isOdd(number) {
+const isOdd = (number) => {
   return number % 2 !== 0;
-}
+};
 
-function updateLeaderboard() {
+const updateLeaderboard = () => {
   const sortedRecords = Object.values(records).sort((a, b) => a.lapTime - b.lapTime);
 
   saveToIndexedDB(records);
@@ -156,11 +156,11 @@ function updateLeaderboard() {
 
     table.appendChild(newRow);
   });
-}
+};
 
 // export result to csv
 if (document.getElementById('exportData')) {
-  document.getElementById('exportData').addEventListener('click', function () {
+  document.getElementById('exportData').addEventListener('click', () => {
     const sortedRecords = Object.values(records).sort((a, b) => a.lapTime - b.lapTime);
 
     // Convert leaderboard data to CSV
@@ -182,11 +182,11 @@ if (document.getElementById('exportData')) {
   });
 }
 
-function initIndexedDB() {
+const initIndexedDB = () => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('RaceLeaderboard', 1);
 
-    request.onupgradeneeded = function (event) {
+    request.onupgradeneeded = (event) => {
       const db = event.target.result;
 
       // Check if the object store exists
@@ -196,17 +196,17 @@ function initIndexedDB() {
       }
     };
 
-    request.onsuccess = function (event) {
+    request.onsuccess = (event) => {
       resolve(event.target.result);
     };
 
-    request.onerror = function (event) {
+    request.onerror = (event) => {
       reject(event.target.error);
     };
   });
-}
+};
 
-function saveToIndexedDB(data) {
+const saveToIndexedDB = (data) => {
   initIndexedDB().then((db) => {
     const transaction = db.transaction(['records'], 'readwrite');
     const store = transaction.objectStore('records');
@@ -218,36 +218,36 @@ function saveToIndexedDB(data) {
       store.add(record);
     });
 
-    transaction.oncomplete = function () {
+    transaction.oncomplete = () => {
       console.log('Data saved to IndexedDB.');
     };
 
-    transaction.onerror = function (event) {
+    transaction.onerror = (event) => {
       console.error('Error saving data:', event.target.error);
     };
   });
-}
+};
 
-function loadFromIndexedDB() {
+const loadFromIndexedDB = () => {
   return new Promise((resolve, reject) => {
     initIndexedDB().then((db) => {
       const transaction = db.transaction(['records'], 'readonly');
       const store = transaction.objectStore('records');
       const request = store.getAll();
 
-      request.onsuccess = function (event) {
+      request.onsuccess = (event) => {
         resolve(event.target.result);
       };
 
-      request.onerror = function (event) {
+      request.onerror = (event) => {
         reject(event.target.error);
       };
     });
   });
-}
+};
 
 // Load records on page load
-window.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('DOMContentLoaded', () => {
   loadFromIndexedDB().then((data) => {
     if (data.length > 0) {
       data.forEach((record) => {
@@ -260,7 +260,7 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 
 if (deleteButton) {
-  document.getElementById('deleteData').addEventListener('click', function () {
+  document.getElementById('deleteData').addEventListener('click', () => {
     // Ask for confirmation before deleting
     const isConfirmed = confirm('Are you sure you want to clear all data?');
     if (!isConfirmed) {
@@ -272,7 +272,7 @@ if (deleteButton) {
 
     const openRequest = indexedDB.open(databaseName);
 
-    openRequest.onsuccess = function (event) {
+    openRequest.onsuccess = (event) => {
       const db = event.target.result;
 
       const transaction = db.transaction(objectStoreName, 'readwrite');
@@ -280,7 +280,7 @@ if (deleteButton) {
 
       const clearRequest = objectStore.clear();
 
-      clearRequest.onsuccess = function () {
+      clearRequest.onsuccess = () => {
         console.log(`All data in the object store '${objectStoreName}' has been cleared.`);
         alert(`All data in the object store '${objectStoreName}' has been cleared.`);
 
@@ -288,13 +288,13 @@ if (deleteButton) {
         refreshData();
       };
 
-      clearRequest.onerror = function (errorEvent) {
+      clearRequest.onerror = (errorEvent) => {
         console.error('Failed to clear the object store:', errorEvent.target.error);
         alert('Failed to clear the object store.');
       };
     };
 
-    openRequest.onerror = function (errorEvent) {
+    openRequest.onerror = (errorEvent) => {
       console.error('Failed to open the database:', errorEvent.target.error);
       alert('Failed to open the database.');
     };
@@ -302,13 +302,13 @@ if (deleteButton) {
 }
 
 // Function to re-fetch and refresh the data after clearing
-function refreshData() {
+const refreshData = () => {
   const databaseName = 'RaceLeaderboard';
   const objectStoreName = 'records';
 
   const openRequest = indexedDB.open(databaseName);
 
-  openRequest.onsuccess = function (event) {
+  openRequest.onsuccess = (event) => {
     const db = event.target.result;
 
     const transaction = db.transaction(objectStoreName, 'readonly');
@@ -317,7 +317,7 @@ function refreshData() {
     // Get all the records to refresh the UI
     const getAllRequest = objectStore.getAll();
 
-    getAllRequest.onsuccess = function () {
+    getAllRequest.onsuccess = () => {
       const records = getAllRequest.result;
 
       console.log('Data after clearing:', records);
@@ -325,20 +325,20 @@ function refreshData() {
       updateUI(records);
     };
 
-    getAllRequest.onerror = function (errorEvent) {
+    getAllRequest.onerror = (errorEvent) => {
       console.error('Failed to fetch data:', errorEvent.target.error);
       alert('Failed to fetch data.');
     };
   };
 
-  openRequest.onerror = function (errorEvent) {
+  openRequest.onerror = (errorEvent) => {
     console.error('Failed to open the database:', errorEvent.target.error);
     alert('Failed to open the database.');
   };
-}
+};
 
 // Example function to update the UI with the current records
-function updateUI(records) {
+const updateUI = (records) => {
   // Assuming you have an element to display the data
   const dataContainer = document.getElementById('raceDataRow');
   dataContainer.innerHTML = ''; // Clear existing content
@@ -346,4 +346,4 @@ function updateUI(records) {
   if (records.length === 0) {
     dataContainer.innerHTML = '';
   }
-}
+};

@@ -18,7 +18,6 @@ app.get('/fwd-input', (req, res) => {
 app.get('/fwd-leaderboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/FWD/leaderboard.html'));
 });
-// -----
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -7,16 +7,16 @@ const PORT = 3000;
 
 // Serve static files
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname, 'src')));
 
 //FWD
 app.get('/fwd-input', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/FWD/input.html'));
+  res.sendFile(path.join(__dirname, 'src/FWD/input.html'));
 });
 
 app.get('/fwd-leaderboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/FWD/leaderboard.html'));
+  res.sendFile(path.join(__dirname, 'src/FWD/leaderboard.html'));
 });
 
 const server = app.listen(PORT, () => {

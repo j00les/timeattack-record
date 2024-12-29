@@ -111,7 +111,7 @@ const updateLeaderboard = () => {
     if (index !== 0) row.remove();
   });
 
-  if(leaderboardPage) {
+  if (leaderboardPage) {
     top20Records.forEach((record, index) => {
       const newRow = document.createElement('tr');
       const position = index + 1;
@@ -125,7 +125,6 @@ const updateLeaderboard = () => {
       }
 
       const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
-
 
       newRow.innerHTML = `
         <td class="position">
@@ -216,18 +215,16 @@ const updateLeaderboard = () => {
     const deleteButtons = document.querySelectorAll('.delete-button');
     deleteButtons.forEach((button) => {
       button.addEventListener('click', (event) => {
-         const recordKey = button.getAttribute('data-key');
-         if (records[recordKey]) {
-           delete records[recordKey]; // Remove the record from memory
-           saveToIndexedDB(Object.values(records)); // Update IndexedDB
-           updateLeaderboard(); // Refresh the table
-         }
-       });
+        const recordKey = button.getAttribute('data-key');
+        if (records[recordKey]) {
+          delete records[recordKey]; // Remove the record from memory
+          saveToIndexedDB(Object.values(records)); // Update IndexedDB
+          updateLeaderboard(); // Refresh the table
+        }
+      });
     });
   }
-
-
-}
+};
 
 // export result to csv
 if (document.getElementById('exportData')) {
@@ -368,7 +365,6 @@ if (deleteButton) {
     };
   });
 }
-
 
 // Example function to update the UI with the current records
 const updateUI = (records) => {

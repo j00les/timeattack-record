@@ -1,33 +1,21 @@
 const express = require('express');
-const path = require('path');
 const WebSocket = require('ws');
 
 const app = express();
 const PORT = 3000;
 
-// Serve static files
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/public', express.static(path.join(__dirname, 'src')));
-app.use(express.static(path.join(__dirname, 'src')));
-
-//FWD
-app.get('/fwd-input', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/FWD/input.html'));
-});
-
-app.get('/fwd-leaderboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/FWD/leaderboard.html'));
-});
-
+// Create the HTTP server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
+// Set up the WebSocket server
 const wss = new WebSocket.Server({ server });
 
+// Store connected clients
 let clients = [];
 
-// Broadcast updates to all connected clients
+// Broadcast function to send data to all connected clients
 function broadcast(data) {
   clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
@@ -36,14 +24,21 @@ function broadcast(data) {
   });
 }
 
+// WebSocket connection handler
 wss.on('connection', (ws) => {
+  console.log('New client connected');
   clients.push(ws);
 
+  // Handle messages received from the client
   ws.on('message', (message) => {
-    console.log('Received:', message);
-    broadcast(JSON.parse(message));
+    console.log('Received data:', message);
+    const data = JSON.parse(message);
+
+    // Broadcast the car name and lap time to other connected clients
+    broadcast(data);
   });
 
+  // Handle WebSocket closure
   ws.on('close', () => {
     clients = clients.filter((client) => client !== ws);
   });

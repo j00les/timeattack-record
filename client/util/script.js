@@ -214,7 +214,7 @@ const updateLeaderboard = () => {
     // Add event listener for delete buttons
     const deleteButtons = document.querySelectorAll('.delete-button');
     deleteButtons.forEach((button) => {
-      button.addEventListener('click', (event) => {
+      button.addEventListener('click', () => {
         const recordKey = button.getAttribute('data-key');
         if (records[recordKey]) {
           delete records[recordKey]; // Remove the record from memory
@@ -365,14 +365,3 @@ if (deleteButton) {
     };
   });
 }
-
-// Example function to update the UI with the current records
-const updateUI = (records) => {
-  // Assuming you have an element to display the data
-  const dataContainer = document.getElementById('raceDataRow');
-  dataContainer.innerHTML = ''; // Clear existing content
-
-  if (records.length === 0) {
-    dataContainer.innerHTML = '';
-  }
-};

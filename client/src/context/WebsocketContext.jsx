@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const WebSocketContext = createContext();
 
@@ -13,6 +14,10 @@ const useWebSocket = () => {
 const WebSocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [data, setData] = useState([]);
+
+  WebSocketProvider.propTypes = {
+    children: PropTypes.node.isRequired
+  };
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:3000'); // Replace with your WebSocket server address

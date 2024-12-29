@@ -3,10 +3,11 @@ import { useWebSocket } from '../context/WebSocketContext';
 
 const InputForm = () => {
   const [carName, setCarName] = useState('');
+  const [driverName, setDriverName] = useState('');
   const [lapTime, setLapTime] = useState('');
   const [leaderboardData, setLeaderboardData] = useState([]);
 
-  const { socket } = useWebSocket(); // Access WebSocket from context
+  const { socket } = useWebSocket();
 
   const handleCarNameChange = (event) => {
     setCarName(event.target.value);
@@ -16,18 +17,24 @@ const InputForm = () => {
     setLapTime(event.target.value);
   };
 
+  const handleDriverNameChange = (event) => {
+    setDriverName(event.target.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     if (socket && socket.readyState === WebSocket.OPEN) {
       const data = {
         carName,
-        lapTime
+        lapTime,
+        driverName
       };
 
       socket.send(JSON.stringify(data));
       setCarName('');
       setLapTime('');
+      setDriverName('');
     } else {
       console.error('WebSocket is not connected');
     }
@@ -58,14 +65,9 @@ const InputForm = () => {
     <div className="flex justify-evenly items-start gap-8 max-w-screen-xl mx-auto pt-24">
       <div className="flex-1 max-w-md">
         <form id="lapForm" onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <label htmlFor="carName" className="text-lg font-semibold">
-            Car Name:
-          </label>
           <input type="text" id="carName" value={carName} onChange={handleCarNameChange} placeholder="Enter car name" required className="p-3 text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <label htmlFor="lapTime" className="text-lg font-semibold">
-            Lap Time:
-          </label>
           <input type="text" id="lapTime" value={lapTime} onChange={handleLapTimeChange} placeholder="Enter lap time (MMDDddd)" required className="p-3 text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" id="driverName" value={driverName} onChange={handleDriverNameChange} placeholder="Enter Driver Name" required className="p-3 text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
           <button type="submit" className="p-3 bg-gray-700 text-white rounded cursor-pointer hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
             Submit
           </button>

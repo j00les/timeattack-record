@@ -6,7 +6,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        titillium: ['"Titillium Web"', ...defaultTheme.fontFamily.sans]
+        titillium: ['"Titillium Web"', ...defaultTheme.fontFamily.sans],
+        sugo: ["'Sugo Pro Display Trial'", ...defaultTheme.fontFamily.sans]
       }
     }
   },

@@ -38,22 +38,22 @@ const Row = (props) => {
           previousColor = blockColor; // Update the previous color
 
           return (
-            <tr key={index} className="font-sugo uppercase font-medium border">
+            <tr key={index} className="font-sugo uppercase font-medium ">
               <td className="flex gap-1.5 mt-2 w-[18rem]">
                 <span className={positionMargin}>{position}</span>
                 <span className="w-2.5" style={{ backgroundColor: blockColor }}></span>
                 <span className="ml-2 text-3xl tracking-tight">{driverName}</span>
               </td>
-              <td className="font-[digital-7] text-center text-[2.2rem]">{lapTime}</td>
-              <td className="px-4 py-2 text-center text-[1.5rem] font-titillium font-semibold flex items-center justify-center gap-[2rem]">
-                <span className="w-[10rem]">{carName}</span>
-                <span>
+              <td className="font-titillium font-semibold  text-center">{lapTime}</td>
+              <td className="px-4 py-2 text-left text-[1.5rem] font-titillium font-semibold flex items-center justify-center gap-[2rem]">
+                <span className="ml-4">
                   <img
                     src={carLogo}
                     alt="Descriptive Alt Text"
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-12 h-12 rounded-full object-cover"
                   />
                 </span>
+                <span className="w-[10rem]">{carName}</span>
               </td>
             </tr>
           );

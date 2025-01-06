@@ -66,7 +66,7 @@ const leaderboardData = [
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
-    driverName: 'alfkj',
+    driverName: 'om agus',
     carType: 'AWD',
 
     gapToFirst: '00:00:000'
@@ -74,7 +74,7 @@ const leaderboardData = [
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
-    driverName: 'alfkj',
+    driverName: 'hendrik',
     carType: 'RWD',
 
     gapToFirst: '00:00:000'

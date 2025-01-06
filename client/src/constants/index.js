@@ -2,165 +2,200 @@ import bmw from '../../public/bw-logo.png';
 
 const leaderboardData = [
   {
-    carName: 'countryman',
+    carName: 'brio merah',
     lapTime: '00:20:222',
-    driverName: 'steven anggoman',
+    driverName: 'steven ad',
     carType: 'FWD',
-    carLogo: bmw
+    carLogo: bmw,
+    gapToFirst: '00:00:000'
   },
   {
     carName: 'ono',
     lapTime: '00:20:222',
     driverName: 'Pak wiewie',
-    carType: 'FWD'
+    carType: 'FWD',
+    gapToFirst: '00:00:000'
   },
   {
     carName: 'ono',
     lapTime: '00:20:222',
-    driverName: 'raphael anggoman',
-    carType: 'FWD'
+    driverName: 'raphael a',
+    carType: 'FWD',
+    gapToFirst: '00:00:000'
   },
   {
     carName: 'ono',
     lapTime: '00:20:222',
     driverName: 'Yoko',
-    carType: 'FWD'
-  },
-
-  {
-    carName: 'ono',
-    lapTime: '00:20:222',
-    driverName: 'Yoko',
-    carType: 'FWD'
+    carType: 'FWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'ono',
     lapTime: '00:20:222',
     driverName: 'Yoko',
-    carType: 'FWD'
+    carType: 'FWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'ono',
     lapTime: '00:20:222',
     driverName: 'Yoko',
-    carType: 'FWD'
+    carType: 'FWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'ono',
     lapTime: '00:20:222',
     driverName: 'Yoko',
-    carType: 'FWD'
+    carType: 'FWD',
+    gapToFirst: '00:00:000'
+  },
+
+  {
+    carName: 'ono',
+    lapTime: '00:20:222',
+    driverName: 'Yoko',
+    carType: 'FWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   },
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'RWD'
+    carType: 'RWD',
+
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'RWD'
+    carType: 'RWD',
+
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'RWD'
+    carType: 'RWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'RWD'
+    carType: 'RWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'RWD'
+    carType: 'RWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'RWD'
+    carType: 'RWD',
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'RWD'
+    carType: 'RWD',
+
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+    gapToFirst: '00:00:000'
   },
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   },
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   },
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   },
 
   {
     carName: 'adflkj',
     lapTime: '00:20:222',
     driverName: 'alfkj',
-    carType: 'AWD'
+    carType: 'AWD',
+
+    gapToFirst: '00:00:000'
   }
 ];
 const popularCarBrands = [

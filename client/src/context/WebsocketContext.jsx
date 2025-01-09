@@ -20,7 +20,7 @@ const WebSocketProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3000'); // Replace with your WebSocket server address
+    const ws = new WebSocket('ws://localhost:3000');
 
     ws.onopen = () => {
       console.log('WebSocket connection established');

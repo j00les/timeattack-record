@@ -3,17 +3,20 @@ import { useState, useEffect } from 'react';
 import { useWebSocket } from '../context/WebSocketContext';
 import Dropdown from '../components/Dropdown';
 import Table from '../components/Table';
-import { leaderboardData } from '../constants';
+// import { leaderboardData } from '../constants';
 
 const Input = () => {
   const [carName, setCarName] = useState('');
   const [driverName, setDriverName] = useState('');
   const [lapTime, setLapTime] = useState('');
   const [carType, setCarType] = useState('');
-  // const [leaderboardData, setLeaderboardData] = useState([]);
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [raceRun, setRaceRun] = useState('');
+  const [heatNumber, setHeatNumber] = useState();
+
+  const { socket } = useWebSocket();
 
   const CAR_OPTIONS = ['FWD', 'AWD', 'RWD'];
-  const { socket } = useWebSocket();
 
   const handleCarNameChange = (event) => {
     setCarName(event.target.value);
@@ -29,6 +32,35 @@ const Input = () => {
 
   const handleCarTypeChange = (event) => {
     setCarType(event.target.value);
+  };
+
+  const handleRaceRunChange = (event) => {
+    setRaceRun(event.target.value);
+  };
+
+  const handleHeatNumber = (event) => {
+    setHeatNumber(event.target.value);
+  };
+
+  const saveToLocalStorage = (raceRunId, heatNumber, driverName, lapTime, carName, carType) => {
+    const raceData = JSON.parse(localStorage.getItem('raceData')) || {};
+
+    if (!raceData[raceRunId]) {
+      raceData[raceRunId] = {};
+    }
+
+    if (!raceData[raceRunId][heatNumber]) {
+      raceData[raceRunId][heatNumber] = [];
+    }
+
+    raceData[raceRunId][heatNumber].push({
+      driverName,
+      lapTime,
+      carName,
+      carType
+    });
+
+    localStorage.setItem('raceData', JSON.stringify(raceData));
   };
 
   const handleSubmit = (event) => {
@@ -47,31 +79,30 @@ const Input = () => {
       setLapTime('');
       setDriverName('');
       setCarType('');
+
+      setRaceRun('');
+      setHeatNumber('');
     } else {
       console.error('WebSocket is not connected');
     }
   };
 
-  // useEffect(() => {
-  //   // Listen for incoming WebSocket messages
-  //   if (socket) {
-  //     socket.onmessage = (message) => {
-  //       const data = JSON.parse(message.data);
-  //       // Update the leaderboard with new lap data
-  //       setLeaderboardData((prevData) => {
-  //         // Add new data, ensuring unique entries
-  //         return [...prevData, data];
-  //       });
-  //     };
-  //   }
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (message) => {
+        const data = JSON.parse(message.data);
+        setLeaderboardData((prevData) => {
+          return [...prevData, data];
+        });
+      };
+    }
 
-  //   // Cleanup WebSocket listener on component unmount
-  //   return () => {
-  //     if (socket) {
-  //       socket.onmessage = null;
-  //     }
-  //   };
-  // }, [socket]);
+    return () => {
+      if (socket) {
+        socket.onmessage = null;
+      }
+    };
+  }, [socket]);
 
   return (
     <div className="flex justify-evenly items-start gap-8 max-w-screen-xl mx-auto pt-24">
@@ -87,7 +118,7 @@ const Input = () => {
             className="p-3 text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
-            type="text"
+            type="number"
             id="lapTime"
             value={lapTime}
             onChange={handleLapTimeChange}
@@ -110,6 +141,25 @@ const Input = () => {
             onChange={handleCarTypeChange}
             id="1"
             placeholder="Select Car Type"
+          />
+          <input
+            type="text"
+            id="raceRun"
+            value={raceRun}
+            onChange={handleRaceRunChange}
+            placeholder="Enter Race Run"
+            required
+            className="p-3 text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <input
+            type="number"
+            id="heat"
+            value={heatNumber}
+            onChange={handleHeatNumber}
+            placeholder="Enter Heat Number"
+            required
+            className="p-3 text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           <button

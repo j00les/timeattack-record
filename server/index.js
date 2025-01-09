@@ -3,19 +3,20 @@ const WebSocket = require('ws');
 
 const app = express();
 const PORT = 3000;
+const cors = require('cors');
 
-// Create the HTTP server
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-// Set up the WebSocket server
 const wss = new WebSocket.Server({ server });
 
-// Store connected clients
 let clients = [];
 
-// Broadcast function to send data to all connected clients
 function broadcast(data) {
   clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
@@ -24,7 +25,6 @@ function broadcast(data) {
   });
 }
 
-// WebSocket connection handler
 wss.on('connection', (ws) => {
   console.log('New client connected');
   clients.push(ws);

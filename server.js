@@ -84,7 +84,7 @@ app.post('/save-race-data', async (req, res) => {
       // Use parameterized queries to avoid SQL injection
       await client.query(
         'INSERT INTO leaderboard (name, car_name, drive_train, lap_time, gap_time, color_class) VALUES ($1, $2, $3, $4, $5, $6)',
-        [name, carName, driveTrain, lapTime, colorClass, gapTime]
+        [name, carName, driveTrain, lapTime, gapTime, colorClass]
       );
     }
 

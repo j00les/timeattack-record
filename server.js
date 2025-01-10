@@ -11,11 +11,11 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //FWD
-app.get('/fwd-input', (req, res) => {
+app.get('/input', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/FWD/input.html'));
 });
 
-app.get('/fwd-leaderboard', (req, res) => {
+app.get('/leaderboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/FWD/leaderboard.html'));
 });
 

@@ -246,7 +246,7 @@ input[type='submit'] {
   font-family: 'Titillium Web', sans-serif "
 }
 
-#exportData {
+#saveData {
   width: 12rem;
   padding: 10px;
   background-color: #444;

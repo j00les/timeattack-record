@@ -37,7 +37,6 @@
 
           <div class="export-and-delete-button">
             <button type="button" id="deleteData">DELETE</button>
-            <button type="button" id="exportData">EXPORT</button>
             <button type="button" id="saveData">SAVE DATA</button>
           </div>
         </form>
@@ -57,7 +56,26 @@
         </table>
       </div>
     </div>
+    <button id="toggleButton">S</button>
 
+    <div id="header-container" style="text-align: center; display: none">
+      <h1
+        id="raceResultHeader"
+        style="
+          font-style: italic;
+          color: red;
+          margin-bottom: 0px;
+          margin-top: 11rem;
+          font-size: 4.5rem;
+        "
+      >
+        RACE RESULT
+      </h1>
+    </div>
+
+    <canvas id="qrCanvas" style="display: none; margin: 0 auto"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
     <script src="public/script.js" type="module"></script>
   </body>
 </html>

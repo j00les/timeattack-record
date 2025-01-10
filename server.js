@@ -1,30 +1,14 @@
 require('dotenv').config();
 
 const WebSocket = require('ws');
-const { Pool } = require('pg');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+const pool = require('./db');
+
 const app = express();
 const PORT = 3000;
-
-// const pool = new Pool({
-//   user: process.env.PG_USER_DEV,
-//   host: process.env.PG_HOST_DEV,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD_DEV,
-//   port: process.env.PG_PASSWORD_HOST
-// });
-
-//its working
-const pool = new Pool({
-  user: process.env.PG_USER_PROD,
-  host: process.env.PG_HOST_PROD,
-  database: process.env.PG_DATABASE_PROD,
-  password: process.env.PG_PASSWORD_PROD,
-  port: process.env.PG_PORT_PROD
-});
 
 const createLeaderboardTable = async () => {
   const query = `
@@ -70,16 +54,44 @@ app.get('/leaderboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/leaderboard.html'));
 });
 
+app.get('/result', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/result.html'));
+});
+
+app.get('/api/result-data', async (req, res) => {
+  try {
+    // Query the database for leaderboard data
+    const result = await pool.query(`
+      SELECT 
+        name, 
+        car_name as carName, 
+        drive_train as driveTrain, 
+        lap_time as lapTime, 
+        gap_time as gapTime, 
+        color_class as colorClass
+      FROM leaderboard
+      ORDER BY lap_time ASC;
+    `);
+
+    // Return the data as JSON
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching leaderboard data:', error);
+
+    // Respond with an error status and message
+    res.status(500).json({ error: 'Failed to fetch leaderboard data' });
+  }
+});
+
 app.post('/save-race-data', async (req, res) => {
   const records = req.body;
-  console.log(records, '--deb rec');
 
   try {
     const client = await pool.connect();
 
     // Insert records into PostgreSQL
     for (let record of records) {
-      const { name, carName, driveTrain, lapTime, colorClass, gapTime } = record;
+      const { name, carName, driveTrain, lapTime, colorClass, gapToFirst: gapTime } = record;
 
       // Use parameterized queries to avoid SQL injection
       await client.query(

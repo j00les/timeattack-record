@@ -19,76 +19,92 @@ socket.onmessage = (event) => {
   updateLeaderboard();
 };
 
-// check if lapform exist first
 if (lapForm) {
   lapForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    let name = document.getElementById('name').value.trim().toUpperCase();
-    const lapTimeString = document.getElementById('lapTime').value.trim().toUpperCase();
-    const carName = document.getElementById('car').value.trim().toUpperCase();
-    const driveTrain = document.getElementById('driveTrain').value.trim().toUpperCase();
+    // Retrieve and format input values
+    const nameInput = document.getElementById('name').value.trim().toUpperCase();
+    const lapTimeInput = document.getElementById('lapTime').value.trim().toUpperCase();
+    const carNameInput = document.getElementById('car').value.trim().toUpperCase();
+    const driveTrainInput = document.getElementById('driveTrain').value.trim().toUpperCase();
 
-    if (name.length > 18) {
-      name = name.slice(0, 11);
-    }
-
-    //  Parse the lap time input (e.g., "0050000" to "00:50:000")
-    const formattedTime = formatLapTime(lapTimeString);
-
-    // Convert lap time to milliseconds for comparison
+    const name = nameInput.length > 18 ? nameInput.slice(0, 11) : nameInput;
+    const formattedTime = formatLapTime(lapTimeInput);
     const lapTimeMilliseconds = timeToMilliseconds(formattedTime);
 
-    const driverKey = `${name}-${carName}`;
+    const driverKey = `${name}-${carNameInput}`;
 
-    // Check if the record exists
-    if (records[driverKey]) {
-      // Compare the existing record with the new lap time
-      if (lapTimeMilliseconds < records[driverKey].lapTime) {
-        records[driverKey].lapTime = lapTimeMilliseconds;
-        records[driverKey].lapTimeString = formattedTime;
+    // Determine the fastest lap time for calculating the gap
+    const fastestLapTime = Object.values(records).reduce(
+      (minTime, record) => Math.min(minTime, record.lapTime),
+      Infinity
+    );
 
-        // Send updated record to the server
-        socket.send(JSON.stringify(records[driverKey]));
-      }
-    } else {
-      const driveTrainColors = {
-        FWD: 'blue',
-        AWD: 'green',
-        RWD: 'violet'
-      };
-
-      const colorClass = driveTrainColors[driveTrain];
-
-      let fastestLapTime = Infinity;
-
-      for (let key in records) {
-        if (records[key].lapTime < fastestLapTime) {
-          fastestLapTime = records[key].lapTime;
-        }
-      }
-
-      const gapTime = lapTimeMilliseconds - fastestLapTime;
-
-      const newRecord = {
-        name,
-        carName,
-        driveTrain,
-        lapTime: lapTimeMilliseconds,
-        lapTimeString: formattedTime,
-        gapTime,
-        colorClass
-      };
-
-      records[driverKey] = newRecord;
-
-      // Send new record to the server
-      socket.send(JSON.stringify(newRecord));
+    // Dynamically calculate gapToFirst
+    let gapToFirst = lapTimeMilliseconds - fastestLapTime;
+    if (gapToFirst <= 0) {
+      gapToFirst = 0; // Explicitly set to 0 for the fastest lap time
     }
 
+    // Update or create the record
+    if (records[driverKey]) {
+      updateRecord(driverKey, lapTimeMilliseconds, formattedTime, gapToFirst);
+    } else {
+      createRecord(
+        name,
+        carNameInput,
+        driveTrainInput,
+        lapTimeMilliseconds,
+        formattedTime,
+        gapToFirst
+      );
+    }
+
+    // Update the leaderboard and reset the form
     updateLeaderboard();
     lapForm.reset();
   });
+}
+
+// Function to update an existing record
+function updateRecord(driverKey, lapTimeMilliseconds, formattedTime, gapToFirst) {
+  const record = records[driverKey];
+
+  // Only update if the new lap time is faster
+  if (lapTimeMilliseconds < record.lapTime) {
+    record.lapTime = lapTimeMilliseconds;
+    record.lapTimeString = formattedTime;
+    record.gapToFirst = gapToFirst;
+
+    // Send the updated record to the server
+    socket.send(JSON.stringify(record));
+  }
+}
+
+// Function to create a new record
+function createRecord(name, carName, driveTrain, lapTimeMilliseconds, formattedTime, gapToFirst) {
+  const driveTrainColors = {
+    FWD: 'blue',
+    AWD: 'green',
+    RWD: 'violet'
+  };
+
+  const colorClass = driveTrainColors[driveTrain] || 'default-color';
+  const newRecord = {
+    name,
+    carName,
+    driveTrain,
+    lapTime: lapTimeMilliseconds,
+    lapTimeString: formattedTime,
+    gapToFirst,
+    colorClass
+  };
+
+  // Add the new record to records and send it to the server
+  const driverKey = `${name}-${carName}`;
+  records[driverKey] = newRecord;
+  socket.send(JSON.stringify(newRecord));
 }
 
 // Format input time (e.g., 0050000 to 00:50:000)
@@ -438,6 +454,7 @@ const getAll = () => {
 
 const sendRaceDataToServer = async () => {
   const raceData = await getAll();
+  console.log(raceData, '--debug');
 
   try {
     const response = await fetch('/save-race-data', {
@@ -458,4 +475,84 @@ const sendRaceDataToServer = async () => {
   }
 };
 
-document.getElementById('saveData').addEventListener('click', sendRaceDataToServer);
+// if (document.getElementById('saveData')) {
+//   document.getElementById('saveData').addEventListener('click', sendRaceDataToServer);
+// }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const saveDataButton = document.getElementById('saveData');
+  const toggleButton = document.getElementById('toggleButton');
+  const canvas = document.getElementById('qrCanvas');
+
+  if (saveDataButton) {
+    saveDataButton.addEventListener('click', () => {
+      handleSaveData();
+      generateQRCode('http://88.223.95.166:3000/result', canvas);
+      // generateQRCode('http://localhost:3000/result', canvas);
+    });
+  }
+
+  if (toggleButton) {
+    toggleButton.addEventListener('click', () => {
+      handleToggleView(canvas);
+    });
+  }
+});
+
+/**
+ * Handles saving race data to the server
+ */
+function handleSaveData() {
+  console.log('Data saved successfully!');
+
+  sendRaceDataToServer();
+}
+
+/**
+ * Toggles visibility between the container and the QR code
+ * @param {HTMLCanvasElement} canvas - The canvas element for QR code
+ */
+function handleToggleView(canvas) {
+  const container = document.querySelector('.container');
+  const header = document.getElementById('header-container');
+
+  if (!container || !canvas || !header) {
+    console.error('Required elements not found.');
+    return;
+  }
+
+  if (container.style.display === 'none') {
+    // Show container and hide QR code and header
+    container.style.display = 'block';
+    canvas.style.display = 'none';
+    header.style.display = 'none';
+    toggleButton.textContent = 'Show QR Code';
+  } else {
+    // Hide container and show QR code and header
+    container.style.display = 'none';
+    canvas.style.display = 'block';
+    header.style.display = 'block';
+    generateQRCode('/table');
+    toggleButton.textContent = 'n';
+  }
+}
+
+/**
+ * Generates a QR code for the specified URL on a canvas
+ * @param {string} url - The URL for the QR code
+ * @param {HTMLCanvasElement} canvas - The canvas element where the QR code will be rendered
+ */
+function generateQRCode(url, canvas) {
+  if (!canvas) {
+    console.error('Canvas element not found.');
+    return;
+  }
+
+  QRCode.toCanvas(canvas, url, { errorCorrectionLevel: 'H', width: 500 }, (error) => {
+    if (error) {
+      console.error('Failed to generate QR code:', error);
+    } else {
+      console.log('QR code successfully generated for:', url);
+    }
+  });
+}

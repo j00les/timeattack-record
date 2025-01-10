@@ -214,6 +214,27 @@ input[type='number']
   border-radius: 4px;
 }
 
+#driveTrain {
+
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+select option[disabled] {
+  color: gray;
+}
+
+select:focus option[disabled] {
+  color: gray;
+}
+
+select option:not([disabled]) {
+  color: black; /* Ensure selected options are not grayed out */
+}
+
+
 input[type='submit'] {
   padding: 10px;
   background-color: #444;

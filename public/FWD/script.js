@@ -29,6 +29,7 @@ if (lapForm) {
     let name = document.getElementById('name').value.trim().toUpperCase();
     const lapTimeString = document.getElementById('lapTime').value.trim().toUpperCase();
     const carName = document.getElementById('car').value.trim().toUpperCase();
+    const driveTrain = document.getElementById('driveTrain').value.trim().toUpperCase();
 
     if (name.length > 18) {
       name = name.slice(0, 11);
@@ -53,17 +54,21 @@ if (lapForm) {
         socket.send(JSON.stringify(records[driverKey]));
       }
     } else {
-      // Assign a random color from the colors array
-      const indexNumber = Math.floor(Math.random() * colors.length);
-      const randomColor = colors[indexNumber];
+      const driveTrainColors = {
+        FWD: 'blue',
+        AWD: 'green',
+        RWD: 'violet'
+      };
 
-      // Create a new record
+      const colorClass = driveTrainColors[driveTrain];
+
       const newRecord = {
         name,
         carName,
+        driveTrain,
         lapTime: lapTimeMilliseconds,
         lapTimeString: formattedTime,
-        colorClass: randomColor
+        colorClass
       };
 
       records[driverKey] = newRecord;
@@ -84,6 +89,16 @@ const formatLapTime = (timeString) => {
   const seconds = paddedTime.substring(2, 4);
   const milliseconds = paddedTime.substring(4);
   return `${minutes}:${seconds}:${milliseconds}`;
+};
+
+// Helper function to format gap-to-first as 00.000
+const formatGapToFirst = (milliseconds) => {
+  const seconds = Math.floor(milliseconds / 1000);
+  const remainingMilliseconds = milliseconds % 1000;
+  const formattedGap = `${seconds.toString().padStart(2, '0')}.${remainingMilliseconds
+    .toString()
+    .padStart(3, '0')}`;
+  return formattedGap;
 };
 
 // Convert formatted time to milliseconds
@@ -112,11 +127,13 @@ const updateLeaderboard = () => {
   });
 
   if (leaderboardPage) {
+    // Get the fastest lap time to calculate gaps
+    const fastestLapTime = top20Records[0]?.lapTime || 0;
+
     top20Records.forEach((record, index) => {
       const newRow = document.createElement('tr');
       const position = index + 1;
       const isSingleDigit = position < 10;
-      const isMoreThanTen = position > 10;
       const positionClass = isSingleDigit ? 'single-digit' : '';
       newRow.id = 'raceDataRow';
 
@@ -124,11 +141,13 @@ const updateLeaderboard = () => {
         newRow.style.backgroundColor = '#D0D0D0';
       }
 
-      const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
+      // Calculate the gap to the first driver
+      const gapToFirstMilliseconds = record.lapTime - fastestLapTime;
+      const formattedGapToFirst = formatGapToFirst(gapToFirstMilliseconds);
 
       newRow.innerHTML = `
         <td class="position">
-          <div class="player-position ${positionClass}" style="color: black;" >${position}</div>
+          <div class="player-position ${positionClass}" style="color: black;">${position}</div>
           <div class="color-box ${record.colorClass}"></div>
           <div class="player-name">
             <p class="name">${record.name}</p>
@@ -141,7 +160,7 @@ const updateLeaderboard = () => {
         </td>
         <td class="gap-to-first">
           <div class="">
-             <p class="gap-to-first-text">00,000</p>
+             <p class="gap-to-first-text">${formattedGapToFirst}</p>
           </div>
         </td>
         <td class="car">${record.carName}</td>
@@ -152,20 +171,25 @@ const updateLeaderboard = () => {
   }
 
   if (inputPage) {
+    const fastestLapTime = top20Records[0]?.lapTime || 0;
+
     sortedRecords.forEach((record, index) => {
       const newRow = document.createElement('tr');
       const position = index + 1;
       const isSingleDigit = position < 10;
       const isMoreThanTen = position > 10;
       const positionClass = isSingleDigit ? 'single-digit' : '';
-      newRow.id = `raceDataRow-${index}`; // Unique ID for each row
+      newRow.id = `raceDataRow-${index}`;
 
-      // Apply alternating row colors
       if (isOdd(index)) {
         newRow.style.backgroundColor = '#D0D0D0';
       }
 
       const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
+
+      // Calculate the gap to the first driver
+      const gapToFirstMilliseconds = record.lapTime - fastestLapTime;
+      const formattedGapToFirst = formatGapToFirst(gapToFirstMilliseconds);
 
       newRow.innerHTML = `
         <td class="position">
@@ -178,6 +202,12 @@ const updateLeaderboard = () => {
         <td class="time">
           <div class="player-time">
              <p class="time-text">${record.lapTimeString}</p>
+          </div>
+        </td>
+
+        <td class="time">
+          <div class="player-time">
+             <p class="time-text">${formattedGapToFirst}</p>
           </div>
         </td>
         

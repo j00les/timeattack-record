@@ -2,12 +2,18 @@ const express = require('express');
 const WebSocket = require('ws');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const cors = require('cors');
+
+const { driverRoutes, runRoutes } = require('./routes');
+const { saveRun } = require('./models/run');
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use('/api/drivers', driverRoutes);
+app.use('/api/runs', runRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
@@ -29,16 +35,17 @@ wss.on('connection', (ws) => {
   console.log('New client connected');
   clients.push(ws);
 
-  // Handle messages received from the client
   ws.on('message', (message) => {
-    console.log('Received data:', message);
-    const data = JSON.parse(message);
+    const data = JSON.parse(message.toString('utf8'));
+    console.log('Received data:', data);
 
-    // Broadcast the car name and lap time to other connected clients
+    const { carName, lapTime, driverName, carType, gapTime } = data;
+
+    saveRun(data);
+
     broadcast(data);
   });
 
-  // Handle WebSocket closure
   ws.on('close', () => {
     clients = clients.filter((client) => client !== ws);
   });

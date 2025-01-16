@@ -39,7 +39,7 @@ const Table = (props) => {
           <tr>
             <th className="text-center bg-red-600 text-white px-4 py-2 rounded-tl-lg">Position</th>
             <th className="text-center bg-red-600 text-white px-4 py-2">Time</th>
-            <th className="text-center bg-red-600 text-white px-4 py-2">Car Name</th>
+            <th className="text-center bg-red-600 textpwhite px-4 py-2">Car Name</th>
             <th className="text-center bg-red-600 text-white px-4 py-2 rounded-tr-lg"></th>
           </tr>
         </thead>

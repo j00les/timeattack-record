@@ -22,9 +22,12 @@ const renderPage = (page, sortedData) => {
   pageRecords.forEach((record, index) => {
     const newRow = document.createElement('tr');
     const position = startIndex + index + 1;
+    const racePosition = index + 1;
     const isSingleDigit = position < 10;
     const positionClass = isSingleDigit ? 'single-digit' : '';
     const formattedGapToFirst = formatGapToFirst(record.gaptime);
+
+    const gapToFirstDisplay = position === 1 ? '' : formattedGapToFirst;
 
     if (isOdd(index)) {
       newRow.style.backgroundColor = '#D0D0D0';
@@ -45,7 +48,7 @@ const renderPage = (page, sortedData) => {
       </td>
       <td class="gap-to-first">
         <div class="">
-          <p class="gap-to-first-text">${formattedGapToFirst}</p>
+          <p class="gap-to-first-text">${gapToFirstDisplay}</p>
         </div>
       </td>
       <td class="car">${record.carname}</td>

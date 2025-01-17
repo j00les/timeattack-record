@@ -140,6 +140,8 @@ const updateLeaderboard = () => {
 
       record.gapToFirst = gapToFirstMilliseconds;
 
+      const gapToFirstDisplay = position === 1 ? '' : formattedGapToFirst;
+
       newRow.innerHTML = `
         <td class="position">
           <div class="player-position ${positionClass}" style="color: black;">${position}</div>
@@ -155,7 +157,7 @@ const updateLeaderboard = () => {
         </td>
         <td class="gap-to-first">
           <div class="">
-             <p class="gap-to-first-text">${formattedGapToFirst}</p>
+             <p class="gap-to-first-text">${gapToFirstDisplay}</p>
           </div>
         </td>
         <td class="car">${record.carName}</td>
@@ -172,7 +174,6 @@ const updateLeaderboard = () => {
       const newRow = document.createElement('tr');
       const position = index + 1;
       const isSingleDigit = position < 10;
-      const isMoreThanTen = position > 10;
       const positionClass = isSingleDigit ? 'single-digit' : '';
       newRow.id = `raceDataRow-${index}`;
 
@@ -184,6 +185,8 @@ const updateLeaderboard = () => {
 
       const gapToFirstMilliseconds = record.lapTime - fastestLapTime;
       const formattedGapToFirst = formatGapToFirst(gapToFirstMilliseconds);
+
+      const gapToFirstDisplay = position === 1 ? '' : formattedGapToFirst;
 
       newRow.innerHTML = `
         <td class="position">
@@ -201,7 +204,7 @@ const updateLeaderboard = () => {
 
         <td class="time">
           <div class="player-time">
-             <p class="time-text">${formattedGapToFirst}</p>
+             <p class="time-text">${gapToFirstDisplay}</p>
           </div>
         </td>
         
@@ -350,10 +353,8 @@ const getAll = () => {
 
     request.onsuccess = (event) => {
       const db = event.target.result;
-
       const transaction = db.transaction(['records'], 'readonly');
       const store = transaction.objectStore('records');
-
       const getRequest = store.getAll();
 
       getRequest.onsuccess = (event) => {

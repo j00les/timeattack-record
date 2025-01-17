@@ -402,8 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (saveDataButton) {
     saveDataButton.addEventListener('click', () => {
       handleSaveData();
-      // generateQRCode('http://88.223.95.166:3000/result', canvas);
-      generateQRCode('http://localhost:3000/result', canvas);
+      generateQRCode('http://88.223.95.166:3000/result', canvas);
+      // generateQRCode('http://localhost:3000/result', canvas);
     });
   }
 

@@ -1,93 +1,151 @@
-// Assuming you have a table element in your HTML like this:
+// import { formatGapToFirst } from '/helper/index.js';
+
+// const leaderboardTableBody = document.querySelector('.table tbody');
+
+// const isOdd = (number) => {
+//   return number % 2 !== 0;
+// };
+
+// const fetchLeaderboardData = async () => {
+//   try {
+//     const response = await fetch('/api/result-data');
+//     const data = await response.json();
+//     const sortedRecords = Object.values(data).sort((a, b) => a.lapTime - b.lapTime);
+
+//     sortedRecords.forEach((record, index) => {
+//       console.log(record);
+//       const newRow = document.createElement('tr');
+//       const position = index + 1;
+//       const isSingleDigit = position < 10;
+//       const positionClass = isSingleDigit ? 'single-digit' : '';
+//       const formattedGapToFirst = formatGapToFirst(record.gaptime);
+
+//       if (isOdd(index)) {
+//         newRow.style.backgroundColor = '#D0D0D0';
+//       }
+
+//       newRow.innerHTML = `
+//         <td class="position">
+//           <div class="player-position ${positionClass}" style="color: black;">${position}</div>
+//           <div class="color-box ${record.colorclass}"></div>
+//           <div class="player-name">
+//             <p class="name">${record.name}</p>
+//           </div>
+//         </td>
+//         <td class="time">
+//           <div class="player-time">
+//             <p class="time-text">${record.laptimestring}</p>
+//           </div>
+//         </td>
+//         <td class="gap-to-first">
+//           <div class="">
+//             <p class="gap-to-first-text">${formattedGapToFirst}</p>
+//           </div>
+//         </td>
+//         <td class="car">${record.carname}</td>
+//       `;
+
+//       leaderboardTableBody.appendChild(newRow);
+//     });
+//   } catch (error) {
+//     console.error('Error fetching leaderboard data:', error);
+//   }
+// };
+
+// window.onload = fetchLeaderboardData;
+
+import { formatGapToFirst } from '/helper/index.js';
+
 const leaderboardTableBody = document.querySelector('.table tbody');
+const prevButton = document.getElementById('prev-page');
+const nextButton = document.getElementById('next-page');
+const pageInfo = document.getElementById('page-info');
 
-const formatTimeValues = (timeInMilliseconds) => {
-  const parsedata = parseInt(timeInMilliseconds, 10);
+let currentPage = 1;
+const recordsPerPage = 10;
+let totalPages = 1;
+let allRecords = [];
 
-  console.log(timeInMilliseconds);
+const isOdd = (number) => number % 2 !== 0;
 
-  const minutes = Math.floor(parsedata / 60000); // Extract minutes
-  const seconds = Math.floor((parsedata % 60000) / 1000); // Extract seconds
-  const milliseconds = parsedata % 1000; // Extract milliseconds
+const renderPage = (page) => {
+  // Clear existing rows
+  leaderboardTableBody.querySelectorAll('tr:not(:first-child)').forEach((row) => row.remove());
 
-  // Format as MM:SS:sss
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(
-    milliseconds
-  ).padStart(3, '0')}`;
+  // Calculate start and end index for the page
+  const startIndex = (page - 1) * recordsPerPage;
+  const endIndex = Math.min(startIndex + recordsPerPage, allRecords.length);
+  const pageRecords = allRecords.slice(startIndex, endIndex);
+
+  // Render rows for the current page
+  pageRecords.forEach((record, index) => {
+    const newRow = document.createElement('tr');
+    const position = startIndex + index + 1;
+    const isSingleDigit = position < 10;
+    const positionClass = isSingleDigit ? 'single-digit' : '';
+    const formattedGapToFirst = formatGapToFirst(record.gaptime);
+
+    if (isOdd(index)) {
+      newRow.style.backgroundColor = '#D0D0D0';
+    }
+
+    newRow.innerHTML = `
+            <td class="position">
+              <div class="player-position ${positionClass}" style="color: black;">${position}</div>
+              <div class="color-box ${record.colorclass}"></div>
+              <div class="player-name">
+                <p class="name">${record.name}</p>
+              </div>
+            </td>
+            <td class="time">
+              <div class="player-time">
+                <p class="time-text">${record.laptimestring}</p>
+              </div>
+            </td>
+            <td class="gap-to-first">
+              <div class="">
+                <p class="gap-to-first-text">${formattedGapToFirst}</p>
+              </div>
+            </td>
+            <td class="car">${record.carname}</td>
+          `;
+
+    leaderboardTableBody.appendChild(newRow);
+  });
+
+  // Update pagination controls
+  prevButton.disabled = page === 1;
+  nextButton.disabled = page === totalPages;
+  pageInfo.textContent = `Page ${page} of ${totalPages}`;
 };
 
-const formatGapTimeValues = (timeInMilliseconds) => {
-  const totalSeconds = (timeInMilliseconds / 1000).toFixed(3); // Convert to seconds with 3 decimal places
-
-  // Split into whole seconds and milliseconds
-  const [seconds, milliseconds] = totalSeconds.split('.');
-
-  // Pad the seconds to ensure it has two digits (e.g., '01' instead of '1')
-  const formattedSeconds = seconds.padStart(2, '0');
-
-  // Combine the formatted seconds and milliseconds back
-  return `${formattedSeconds}.${milliseconds}`;
-};
-
-const isOdd = (number) => {
-  return number % 2 !== 0;
-};
-
-// Fetch the leaderboard data from the backend when the page loads
 const fetchLeaderboardData = async () => {
   try {
-    const response = await fetch('/api/result-data'); // Adjust this URL to match your backend route
+    const response = await fetch('/api/result-data');
     const data = await response.json();
+    allRecords = Object.values(data).sort((a, b) => a.lapTime - b.lapTime);
+    console.log(data, '--debug');
 
-    const filteredData = Array.from(
-      new Map(data.map((record) => [`${record.name}-${record.carName}`, record])).values()
-    );
-
-    filteredData.sort((a, b) => parseInt(a.lapTime, 10) - parseInt(b.lapTime, 10));
-    console.log(data, '--debug data');
-
-    // Inject rows into the table
-    filteredData.forEach((record, index) => {
-      const newRow = document.createElement('tr');
-
-      const position = index + 1;
-
-      const isSingleDigit = position < 10;
-      const positionClass = isSingleDigit ? 'single-digit' : '';
-
-      const formattedLapTime = formatTimeValues(record.laptime);
-      const formattedGapToFirst = formatGapTimeValues(Math.abs(record.gaptime));
-
-      if (isOdd(index)) {
-        newRow.style.backgroundColor = '#D0D0D0';
-      }
-
-      newRow.innerHTML = `
-        <td class="position">
-          <div class="player-position ${positionClass}" style="color: black;">${position}</div>
-          <div class="color-box ${record.colorclass}"></div>
-          <div class="player-name">
-            <p class="name">${record.name}</p>
-          </div>
-        </td>
-        <td class="time">
-          <div class="player-time">
-            <p class="time-text">${formattedLapTime}</p>
-          </div>
-        </td>
-        <td class="gap-to-first">
-          <div class="">
-            <p class="gap-to-first-text">${formattedGapToFirst}</p>
-          </div>
-        </td>
-        <td class="car">${record.carname}</td>
-      `;
-
-      leaderboardTableBody.appendChild(newRow);
-    });
+    totalPages = Math.ceil(allRecords.length / recordsPerPage);
+    renderPage(currentPage);
   } catch (error) {
     console.error('Error fetching leaderboard data:', error);
   }
 };
+
+// Event listeners for pagination
+prevButton.addEventListener('click', () => {
+  if (currentPage > 1) {
+    currentPage -= 1;
+    renderPage(currentPage);
+  }
+});
+
+nextButton.addEventListener('click', () => {
+  if (currentPage < totalPages) {
+    currentPage += 1;
+    renderPage(currentPage);
+  }
+});
 
 window.onload = fetchLeaderboardData;

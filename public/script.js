@@ -1,10 +1,10 @@
+import { formatGapToFirst, timeToMilliseconds, formatLapTime } from '/helper/index.js';
+
 const inputPage = document.getElementById('input');
 const leaderboardPage = document.getElementById('leaderboard');
 const lapForm = document.getElementById('lapForm');
 const table = document.querySelector('.table');
 const deleteButton = document.getElementById('deleteData');
-
-const colors = ['red', 'blue', 'green', 'orange', 'yellow', 'violet'];
 
 const records = {};
 const socket = new WebSocket('ws://localhost:3000');
@@ -35,17 +35,17 @@ if (lapForm) {
 
     const driverKey = `${name}-${carNameInput}`;
 
-    // Determine the fastest lap time for calculating the gap
     const fastestLapTime = Object.values(records).reduce(
       (minTime, record) => Math.min(minTime, record.lapTime),
       Infinity
     );
 
-    // Dynamically calculate gapToFirst
     let gapToFirst = lapTimeMilliseconds - fastestLapTime;
     if (gapToFirst <= 0) {
-      gapToFirst = 0; // Explicitly set to 0 for the fastest lap time
+      gapToFirst = 0;
     }
+
+    const formattedGapToFirst = formatGapToFirst(gapToFirst);
 
     // Update or create the record
     if (records[driverKey]) {
@@ -57,7 +57,8 @@ if (lapForm) {
         driveTrainInput,
         lapTimeMilliseconds,
         formattedTime,
-        gapToFirst
+        gapToFirst,
+        formattedGapToFirst
       );
     }
 
@@ -67,74 +68,48 @@ if (lapForm) {
   });
 }
 
-// Function to update an existing record
-function updateRecord(driverKey, lapTimeMilliseconds, formattedTime, gapToFirst) {
+function updateRecord(
+  driverKey,
+  lapTimeMilliseconds,
+  formattedTime,
+  gapToFirst,
+  formattedGapToFirst
+) {
   const record = records[driverKey];
 
-  // Only update if the new lap time is faster
   if (lapTimeMilliseconds < record.lapTime) {
     record.lapTime = lapTimeMilliseconds;
     record.lapTimeString = formattedTime;
     record.gapToFirst = gapToFirst;
+    record.gapToFirstString = formattedGapToFirst;
 
-    // Send the updated record to the server
     socket.send(JSON.stringify(record));
   }
 }
 
-// Function to create a new record
 function createRecord(name, carName, driveTrain, lapTimeMilliseconds, formattedTime, gapToFirst) {
   const driveTrainColors = {
     FWD: 'blue',
-    AWD: 'green',
-    RWD: 'violet'
+    AWD: 'violet',
+    RWD: 'red'
   };
 
-  const colorClass = driveTrainColors[driveTrain] || 'default-color';
+  const colorClass = driveTrainColors[driveTrain];
   const newRecord = {
     name,
     carName,
     driveTrain,
     lapTime: lapTimeMilliseconds,
-    lapTimeString: formattedTime,
     gapToFirst,
+    lapTimeString: formattedTime,
+
     colorClass
   };
 
-  // Add the new record to records and send it to the server
   const driverKey = `${name}-${carName}`;
   records[driverKey] = newRecord;
   socket.send(JSON.stringify(newRecord));
 }
-
-// Format input time (e.g., 0050000 to 00:50:000)
-const formatLapTime = (timeString) => {
-  const paddedTime = timeString.padStart(7, '0');
-  const minutes = paddedTime.substring(0, 2);
-  const seconds = paddedTime.substring(2, 4);
-  const milliseconds = paddedTime.substring(4);
-  return `${minutes}:${seconds}:${milliseconds}`;
-};
-
-// Helper function to format gap-to-first as 00.000
-const formatGapToFirst = (milliseconds) => {
-  const seconds = Math.floor(milliseconds / 1000);
-  const remainingMilliseconds = milliseconds % 1000;
-  const formattedGap = `${seconds.toString().padStart(2, '0')}.${remainingMilliseconds
-    .toString()
-    .padStart(3, '0')}`;
-  return formattedGap;
-};
-
-// Convert formatted time to milliseconds
-const timeToMilliseconds = (formattedTime) => {
-  const [minutes, seconds, milliseconds] = formattedTime.split(':');
-  return (
-    parseInt(minutes) * 60000 + // Minutes to milliseconds
-    parseInt(seconds) * 1000 + // Seconds to milliseconds
-    parseInt(milliseconds) // Milliseconds
-  );
-};
 
 const isOdd = (number) => {
   return number % 2 !== 0;
@@ -212,7 +187,7 @@ const updateLeaderboard = () => {
         newRow.style.backgroundColor = '#D0D0D0';
       }
 
-      const rowColorClass = isMoreThanTen ? 'black' : record.colorClass;
+      const rowColorClass = record.colorClass;
 
       // Calculate the gap to the first driver
       const gapToFirstMilliseconds = record.lapTime - fastestLapTime;
@@ -274,30 +249,6 @@ const updateLeaderboard = () => {
     });
   }
 };
-
-// export result to csv
-if (document.getElementById('exportData')) {
-  document.getElementById('exportData').addEventListener('click', () => {
-    const sortedRecords = Object.values(records).sort((a, b) => a.lapTime - b.lapTime);
-
-    // Convert leaderboard data to CSV
-    let csvContent = 'Name,Car,Lap Time\n'; // Header row
-    sortedRecords.forEach((record) => {
-      csvContent += `${record.name},${record.carName},${record.lapTimeString}\n`;
-    });
-
-    // Create a downloadable CSV file
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'hasil_balap.csv'; // File name
-    link.click();
-
-    // Clean up the URL object
-    URL.revokeObjectURL(url);
-  });
-}
 
 const initIndexedDB = () => {
   return new Promise((resolve, reject) => {
@@ -414,17 +365,6 @@ if (deleteButton) {
   });
 }
 
-// Example function to update the UI with the current records
-const updateUI = (records) => {
-  // Assuming you have an element to display the data
-  const dataContainer = document.getElementById('raceDataRow');
-  dataContainer.innerHTML = ''; // Clear existing content
-
-  if (records.length === 0) {
-    dataContainer.innerHTML = '';
-  }
-};
-
 const getAll = () => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('RaceLeaderboard', 1);
@@ -454,7 +394,6 @@ const getAll = () => {
 
 const sendRaceDataToServer = async () => {
   const raceData = await getAll();
-  console.log(raceData, '--debug');
 
   try {
     const response = await fetch('/save-race-data', {
@@ -475,10 +414,6 @@ const sendRaceDataToServer = async () => {
   }
 };
 
-// if (document.getElementById('saveData')) {
-//   document.getElementById('saveData').addEventListener('click', sendRaceDataToServer);
-// }
-
 document.addEventListener('DOMContentLoaded', () => {
   const saveDataButton = document.getElementById('saveData');
   const toggleButton = document.getElementById('toggleButton');
@@ -487,8 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (saveDataButton) {
     saveDataButton.addEventListener('click', () => {
       handleSaveData();
-      generateQRCode('http://88.223.95.166:3000/result', canvas);
-      // generateQRCode('http://localhost:3000/result', canvas);
+      // generateQRCode('http://88.223.95.166:3000/result', canvas);
+      generateQRCode('http://localhost:3000/result', canvas);
     });
   }
 

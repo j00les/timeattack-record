@@ -19,7 +19,8 @@ const createLeaderboardTable = async () => {
       drive_train VARCHAR(50) NOT NULL,
       lap_time VARCHAR(50) NOT NULL,
       gap_time VARCHAR(50) NOT NULL,
-      color_class VARCHAR(50) NOT NULL
+      color_class VARCHAR(50) NOT NULL,
+      lap_time_string VARCHAR(50) NOT NULL
     );
 
     CREATE INDEX IF NOT EXISTS idx_lap_time ON leaderboard (lap_time);
@@ -42,8 +43,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Serve static files
+app.use('/helper', express.static(path.join(__dirname, 'helper')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/input', (req, res) => {
@@ -60,7 +63,6 @@ app.get('/result', (req, res) => {
 
 app.get('/api/result-data', async (req, res) => {
   try {
-    // Query the database for leaderboard data
     const result = await pool.query(`
       SELECT 
         name, 
@@ -68,17 +70,16 @@ app.get('/api/result-data', async (req, res) => {
         drive_train as driveTrain, 
         lap_time as lapTime, 
         gap_time as gapTime, 
-        color_class as colorClass
+        color_class as colorClass,
+        lap_time_string as lapTimeString
       FROM leaderboard
       ORDER BY lap_time ASC;
     `);
 
-    // Return the data as JSON
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching leaderboard data:', error);
 
-    // Respond with an error status and message
     res.status(500).json({ error: 'Failed to fetch leaderboard data' });
   }
 });
@@ -89,14 +90,20 @@ app.post('/save-race-data', async (req, res) => {
   try {
     const client = await pool.connect();
 
-    // Insert records into PostgreSQL
     for (let record of records) {
-      const { name, carName, driveTrain, lapTime, colorClass, gapToFirst: gapTime } = record;
+      const {
+        name,
+        carName,
+        driveTrain,
+        lapTime,
+        colorClass,
+        gapToFirst: gapTime,
+        lapTimeString
+      } = record;
 
-      // Use parameterized queries to avoid SQL injection
       await client.query(
-        'INSERT INTO leaderboard (name, car_name, drive_train, lap_time, gap_time, color_class) VALUES ($1, $2, $3, $4, $5, $6)',
-        [name, carName, driveTrain, lapTime, gapTime, colorClass]
+        'INSERT INTO leaderboard (name, car_name, drive_train, lap_time, gap_time, color_class, lap_time_string) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [name, carName, driveTrain, lapTime, gapTime, colorClass, lapTimeString]
       );
     }
 

@@ -38,9 +38,9 @@ const createLeaderboardTable = async () => {
 
 createLeaderboardTable();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
 // Serve static files
 app.use('/helper', express.static(path.join(__dirname, 'helper')));

@@ -68,20 +68,13 @@ if (lapForm) {
   });
 }
 
-function updateRecord(
-  driverKey,
-  lapTimeMilliseconds,
-  formattedTime,
-  gapToFirst,
-  formattedGapToFirst
-) {
+function updateRecord(driverKey, lapTimeMilliseconds, formattedTime, gapToFirst) {
   const record = records[driverKey];
 
   if (lapTimeMilliseconds < record.lapTime) {
     record.lapTime = lapTimeMilliseconds;
     record.lapTimeString = formattedTime;
     record.gapToFirst = gapToFirst;
-    record.gapToFirstString = formattedGapToFirst;
 
     socket.send(JSON.stringify(record));
   }
@@ -189,7 +182,6 @@ const updateLeaderboard = () => {
 
       const rowColorClass = record.colorClass;
 
-      // Calculate the gap to the first driver
       const gapToFirstMilliseconds = record.lapTime - fastestLapTime;
       const formattedGapToFirst = formatGapToFirst(gapToFirstMilliseconds);
 
@@ -219,19 +211,6 @@ const updateLeaderboard = () => {
         </td>
       `;
 
-      // Apply additional styling for rows with position > 10
-      if (isMoreThanTen) {
-        const nameElements = newRow.querySelectorAll('.name');
-        nameElements.forEach((element) => {
-          element.style.fontFamily = 'Titillium Web, sans-serif';
-          element.style.fontWeight = 600;
-          element.style.fontSize = 'large';
-        });
-
-        record.colorClass = 'black';
-      }
-
-      // Append the new row to the table
       table.appendChild(newRow);
     });
 

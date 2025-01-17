@@ -161,10 +161,10 @@ table .car-header {
 
 .red {
   background-color: hsl(0, 100%, 50%);
-  height: 1.5rem;
+  height: 1rem;
   width: 4px;
   border: solid 1px hsl(0, 100%, 50%);
-  padding: 3px;
+  padding: 2px;
 }
 
 .blue {
@@ -318,4 +318,110 @@ form {
   .table .car {
     font-size: 16px;
   }
+}
+
+@media (max-width: 381px) {
+  .table-header {
+    font-size: 1.5rem;
+  }
+
+  .table th,
+  .table td {
+    font-size: 0.9rem;
+  }
+
+  .position-header,
+  .time-header,
+  .gap-to-first-header,
+  .car-header {
+    font-size: 1rem;
+  }
+
+  .table .name {
+    font-size: 15px;
+
+    font-weight: 600;
+  }
+
+  .table .time {
+    font-size: 16px;
+  }
+
+  .table .car {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 344px) {
+  .table-header {
+    font-size: 1.5rem;
+  }
+
+  .table th,
+  .table td {
+    font-size: 0.8rem;
+  }
+
+  .position-header,
+  .time-header,
+  .gap-to-first-header,
+  .car-header {
+    font-size: 0.5rem;
+  }
+
+  .gap-to-first-header {
+    background-color: blue;
+  }
+  .table .name {
+    font-size: 15px;
+
+    font-weight: 600;
+  }
+
+  .table .time {
+    font-size: 16px;
+  }
+
+  .table .car {
+    font-size: 16px;
+  }
+}
+
+#pagination-controls {
+  margin: 0 auto;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+#pagination-container {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  padding: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  margin-top: 0.5rem;
+}
+
+#icon-container {
+  background-color: red;
+  border-radius: 5px;
+  border: 1px solid black;
+  padding: 3px;
+  display: flex;
+  justify-content: center;
+}
+
+#next-page {
+  color: white;
+}
+
+#prev-page {
+  color: white;
+}
+#page-info {
+  font-weight: 600;
 }
